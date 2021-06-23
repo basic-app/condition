@@ -5,5 +5,8 @@
         "psr-4": {
             "BasicApp\\Condition\\" : ""
         }
+    },
+    "require": {
+        "basic-app/string-helper": "*"
     }
 }
