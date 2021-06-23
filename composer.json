@@ -1,0 +1,9 @@
+{
+    "name": "basic-app/condition",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BasicApp\\Condition\\" : ""
+        }
+    }
+}
