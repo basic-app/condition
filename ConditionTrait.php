@@ -21,6 +21,16 @@ trait ConditionTrait
 
     protected $notCondition = '-';
 
+    public function filterWhereCondition(string $field, string $condition)
+    {
+        if ($condition)
+        {
+            return $this->whereCondition($field, $condition);
+        }
+
+        return $this;
+    }
+
     public function whereCondition(string $field, string $condition)
     {
         $andSegments = explode($this->andConditionDevider, $condition);
