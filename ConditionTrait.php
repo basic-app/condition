@@ -56,7 +56,7 @@ trait ConditionTrait
                 continue;
             }
 
-            $orSegments = explode($this->orConditionDevider, $condition);
+            $orSegments = explode($this->orConditionDevider, $andSegment);
 
             $andCondition = array_shift($orSegments);
 
@@ -68,7 +68,7 @@ trait ConditionTrait
                 {
                     $this->orGroupStart();
 
-                    $this->applyCondition($field, $andCondition);
+                    $this->applyCondition($field, $orCondition);
                 
                     $this->groupEnd();
                 }
