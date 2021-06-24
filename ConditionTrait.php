@@ -19,6 +19,8 @@ trait ConditionTrait
 
     protected $likeCondition = '%';
 
+    protected $notLikeCondition = '-%';
+
     protected $notCondition = '-';
 
     public function filterWhereCondition($field, ?string $condition = null)
@@ -111,9 +113,38 @@ trait ConditionTrait
             return $this;
         }
 
+        if (string_starts_with($condition, $this->notLikeCondition))
+        {
+            $condition = string_replace_first($this->notLikeCondition, '', $condition);
+
+            $this->notLike($field, $condition, 'before');
+
+            return $this;
+        }
+
         if (string_starts_with($condition, $this->likeCondition))
         {
+            $condition = string_replace_first($this->likeCondition, '', $condition);
+
             $this->like($field, $condition, 'before');
+
+            return $this;
+        }
+
+        if (string_ends_with($condition, $this->likeCondition))
+        {
+            $condition = string_replace_last($this->likeCondition, '', $condition);
+
+            $this->like($field, $condition, 'after');
+
+            return $this;
+        }
+
+        if (string_ends_with($condition, $this->notLikeCondition))
+        {
+            $condition = string_replace_last($this->notLikeCondition, '', $condition);
+
+            $this->notLike($field, $condition, 'after');
 
             return $this;
         }
@@ -124,20 +155,6 @@ trait ConditionTrait
 
             $this->where($field . ' !=', $condition);
             
-            return $this;
-        }
-
-        if (string_ends_with($condition, $this->likeCondition))
-        {
-            $this->like($field, $condition, 'after');
-
-            return $this;
-        }
-
-        if (mb_strpos($condition, '%') !== false)
-        {
-            $this->like($field, $this->db->escapeLikeString($condition), 'both', false);
-
             return $this;
         }
 
