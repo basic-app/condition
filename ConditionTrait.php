@@ -9,9 +9,9 @@ namespace BasicApp\Condition;
 trait ConditionTrait
 {
 
-    protected $orConditionDevider = ' | ';
+    protected $orConditionDevider = '|';
 
-    protected $andConditionDevider = ' & ';
+    protected $andConditionDevider = '&';
 
     protected $emptyCondition = '/';
 
