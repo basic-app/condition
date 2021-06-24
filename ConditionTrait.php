@@ -21,18 +21,28 @@ trait ConditionTrait
 
     protected $notCondition = '-';
 
-    public function filterWhereCondition(string $field, string $condition)
+    public function filterWhereCondition($field, ?string $condition = null)
     {
-        if ($condition)
+        if (is_array($field))
         {
-            return $this->whereCondition($field, $condition);
-        }
+            foreach($field as $key => $value)
+            {
+                $this->whereCondition($key, $value);
+            }
 
-        return $this;
+            return $this;
+        }
+        
+        return $this->whereCondition($field, $condition);
     }
 
-    public function whereCondition(string $field, string $condition)
+    public function whereCondition(string $field, ?string $condition)
     {
+        if (!$condition)
+        {
+            return $this;
+        }
+
         $andSegments = explode($this->andConditionDevider, $condition);
 
         $this->groupStart();
