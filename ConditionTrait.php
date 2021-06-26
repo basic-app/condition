@@ -9,20 +9,6 @@ namespace BasicApp\Condition;
 trait ConditionTrait
 {
 
-    protected $orConditionDevider = '|';
-
-    protected $andConditionDevider = '&';
-
-    protected $emptyCondition = '/';
-
-    protected $notEmptyCondition = '-/';
-
-    protected $likeCondition = '%';
-
-    protected $notLikeCondition = '-%';
-
-    protected $notCondition = '-';
-
     public function filterWhereCondition($field, ?string $condition = null)
     {
         if (is_array($field))
@@ -40,12 +26,16 @@ trait ConditionTrait
 
     public function whereCondition(string $field, ?string $condition)
     {
+        $andConditionDevider = property_exists($this, 'andConditionDevider') ? $this->andConditionDevider : '&';
+
+        $orConditionDevider = property_exists($this, 'orConditionDevider') ? $this->orConditionDevider : '|';
+
         if (!$condition)
         {
             return $this;
         }
 
-        $andSegments = explode($this->andConditionDevider, $condition);
+        $andSegments = explode($andConditionDevider, $condition);
 
         $this->groupStart();
 
@@ -56,7 +46,7 @@ trait ConditionTrait
                 continue;
             }
 
-            $orSegments = explode($this->orConditionDevider, $andSegment);
+            $orSegments = explode($orConditionDevider, $andSegment);
 
             $andCondition = array_shift($orSegments);
 
@@ -84,7 +74,9 @@ trait ConditionTrait
     {
         helper('string');
 
-        if ($condition == $this->emptyCondition)
+        $emptyCondition = property_exists($this, 'emptyCondition') ? $this->emptyCondition : '/';
+
+        if ($condition == $emptyCondition)
         {
             $this->where($field . ' IS NULL');
 
@@ -93,7 +85,9 @@ trait ConditionTrait
             return $this;
         }
 
-        if ($condition == $this->notEmptyCondition)
+        $notEmptyCondition = property_exists($this, 'notEmptyCondition') ? $this->notEmptyCondition : '-/';
+
+        if ($condition == $notEmptyCondition)
         {
             $this->where($field . ' IS NOT NULL');
 
@@ -113,45 +107,51 @@ trait ConditionTrait
             return $this;
         }
 
-        if (string_starts_with($condition, $this->notLikeCondition))
+        $notLikeCondition = property_exists($this, 'notLikeCondition') ? $this->notLikeCondition : '-%';
+
+        if (string_starts_with($condition, $notLikeCondition))
         {
-            $condition = string_replace_first($this->notLikeCondition, '', $condition);
+            $condition = string_replace_first($notLikeCondition, '', $condition);
 
             $this->notLike($field, $condition, 'before');
 
             return $this;
         }
 
-        if (string_starts_with($condition, $this->likeCondition))
+        if (string_ends_with($condition, $notLikeCondition))
         {
-            $condition = string_replace_first($this->likeCondition, '', $condition);
-
-            $this->like($field, $condition, 'before');
-
-            return $this;
-        }
-
-        if (string_ends_with($condition, $this->likeCondition))
-        {
-            $condition = string_replace_last($this->likeCondition, '', $condition);
-
-            $this->like($field, $condition, 'after');
-
-            return $this;
-        }
-
-        if (string_ends_with($condition, $this->notLikeCondition))
-        {
-            $condition = string_replace_last($this->notLikeCondition, '', $condition);
+            $condition = string_replace_last($notLikeCondition, '', $condition);
 
             $this->notLike($field, $condition, 'after');
 
             return $this;
         }
 
-        if (string_starts_with($condition, $this->notCondition))
+        $likeCondition = property_exists($this, 'likeCondition') ? $this->likeCondition : '%';
+
+        if (string_starts_with($condition, $likeCondition))
         {
-            $condition = string_replace_first($this->notCondition, '', $condition);
+            $condition = string_replace_first($likeCondition, '', $condition);
+
+            $this->like($field, $condition, 'before');
+
+            return $this;
+        }
+
+        if (string_ends_with($condition, $likeCondition))
+        {
+            $condition = string_replace_last($likeCondition, '', $condition);
+
+            $this->like($field, $condition, 'after');
+
+            return $this;
+        }
+
+        $notCondition = property_exists($this, 'notCondition') ? $this->notCondition : '-';
+
+        if (string_starts_with($condition, $notCondition))
+        {
+            $condition = string_replace_first($notCondition, '', $condition);
 
             $this->where($field . ' !=', $condition);
             
