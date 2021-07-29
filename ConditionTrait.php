@@ -6,6 +6,8 @@
  */
 namespace BasicApp\Condition;
 
+use BasicApp\String\StringHelper;
+
 trait ConditionTrait
 {
 
@@ -72,8 +74,6 @@ trait ConditionTrait
 
     public function applyCondition(string $field, string $condition)
     {
-        helper('string');
-
         $emptyCondition = property_exists($this, 'emptyCondition') ? $this->emptyCondition : '/';
 
         if ($condition == $emptyCondition)
@@ -96,11 +96,11 @@ trait ConditionTrait
             return $this;
         }
 
-        if (string_is('\".+\"', $condition))
+        if (StringHelper::is('\".+\"', $condition))
         {
-            $condition = string_replace_first('"', '', $condition);
+            $condition = StringHelper::replaceFirst('"', '', $condition);
 
-            $condition = string_replace_last('"', '', $condition);
+            $condition = StringHelper::replaceLast('"', '', $condition);
         
             $this->where($field, $condition);
 
@@ -109,18 +109,18 @@ trait ConditionTrait
 
         $notLikeCondition = property_exists($this, 'notLikeCondition') ? $this->notLikeCondition : '-%';
 
-        if (string_starts_with($condition, $notLikeCondition))
+        if (StringHelper::startsWith($condition, $notLikeCondition))
         {
-            $condition = string_replace_first($notLikeCondition, '', $condition);
+            $condition = StringHelper::replaceFirst($notLikeCondition, '', $condition);
 
             $this->notLike($field, $condition, 'before');
 
             return $this;
         }
 
-        if (string_ends_with($condition, $notLikeCondition))
+        if (StringHelper::endsWith($condition, $notLikeCondition))
         {
-            $condition = string_replace_last($notLikeCondition, '', $condition);
+            $condition = StringHelper::replaceLast($notLikeCondition, '', $condition);
 
             $this->notLike($field, $condition, 'after');
 
@@ -129,18 +129,18 @@ trait ConditionTrait
 
         $likeCondition = property_exists($this, 'likeCondition') ? $this->likeCondition : '%';
 
-        if (string_starts_with($condition, $likeCondition))
+        if (StringHelper::startsWith($condition, $likeCondition))
         {
-            $condition = string_replace_first($likeCondition, '', $condition);
+            $condition = StringHelper::replaceFirst($likeCondition, '', $condition);
 
             $this->like($field, $condition, 'before');
 
             return $this;
         }
 
-        if (string_ends_with($condition, $likeCondition))
+        if (StringHelper::endsWith($condition, $likeCondition))
         {
-            $condition = string_replace_last($likeCondition, '', $condition);
+            $condition = StringHelper::replaceLast($likeCondition, '', $condition);
 
             $this->like($field, $condition, 'after');
 
@@ -149,9 +149,9 @@ trait ConditionTrait
 
         $notCondition = property_exists($this, 'notCondition') ? $this->notCondition : '-';
 
-        if (string_starts_with($condition, $notCondition))
+        if (StringHelper::startsWith($condition, $notCondition))
         {
-            $condition = string_replace_first($notCondition, '', $condition);
+            $condition = StringHelper::replaceFirst($notCondition, '', $condition);
 
             $this->where($field . ' !=', $condition);
             
